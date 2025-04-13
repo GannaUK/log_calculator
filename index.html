@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Pore Volume Calculator</title>
+    <style>
+        body {
+            display: flex;
+            font-family: Arial, sans-serif;
+        }
+
+        .left {
+            width: 50%;
+            padding: 10px;
+        }
+
+        .right {
+            width: 50%;
+            padding: 10px;
+        }
+
+        table,
+        th,
+        td {
+            border: 1px solid black;
+            border-collapse: collapse;
+            padding: 4px 8px;
+        }
+
+        th {
+            background-color: #f0f0f0;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="left">
+        <img src="log.png" alt="Log" width="100%" />
+    </div>
+
+    <div class="right">
+        <h2>Pore Volume Calculator (Sand Zones)</h2>
+
+        <textarea id="logData" rows="12" cols="60">
+Depth,GR,DPHI,NPHI
+6360,31,0.21,0.36
+6370,29,0.27,0.36
+6380,15,0.33,0.27
+6390,15,0.33,0.27
+6400,10,0.33,0.30
+6410,45,0.24,0.39
+6420,45,0.24,0.39
+6430,29,0.33,0.27
+6440,10,0.36,0.18
+6450,10,0.36,0.30
+6460,10,0.27,0.40
+6470,10,0.27,0.39
+6480,10,0.30,0.33
+6490,10,0.33,0.30
+6500,10,0.25,0.27
+6510,30,0.33,0.33
+6520,40,0.26,0.38
+    </textarea><br />
+
+        <button onclick="calculate()">Calculate Pore Volume</button>
+        <br /><br />
+
+
+        <div id="result"></div>
+    </div>
+
+    <script>
+        function calculate() {
+            const area = 49720; // acres
+            const factor = 7758; // conversion to barrels
+            const data = document.getElementById("logData").value.trim().split("\n").slice(1);
+
+            let totalPoreVolume = 0;
+            let totalPhi = 0;
+            let count = 0;
+
+            let tableHTML = '<table><tr><th>Depth</th><th>GR</th><th>DPHI</th><th>NPHI</th><th>Porosity</th><th>Pore Volume (bbl)</th></tr>';
+
+            data.forEach(row => {
+                const [depth, gr, dphi, nphi] = row.split(',').map(Number);
+                const isSand = gr < 30;
+
+                if (isSand) {
+                    const phi = (dphi + nphi) / 2;
+                    const h = 10; // ft step
+                    const pv = area * h * phi * factor;
+                    totalPoreVolume += pv;
+                    totalPhi += phi;
+                    count++;
+
+                    tableHTML += `<tr><td>${depth}</td><td>${gr}</td><td>${dphi}</td><td>${nphi}</td><td>${phi.toFixed(2)}</td><td>${pv.toFixed(0)}</td></tr>`;
+                }
+            });
+            const averagePhi = totalPhi / count;
+
+            tableHTML += `</table><p><strong>Average Porosity (Ø):</strong> ${averagePhi.toFixed(3)}</p>`;
+            tableHTML += `<p><strong>Total Reservoir Pore Volume:</strong> ${totalPoreVolume.toLocaleString(undefined, { maximumFractionDigits: 0 })} bbl</p>`;
+            document.getElementById("result").innerHTML = tableHTML;
+        }
+    </script>
+</body>
+
+</html>
