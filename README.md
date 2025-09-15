@@ -2,6 +2,11 @@
 
 This is a simple HTML + JavaScript app that helps estimate **reservoir pore volume** in sand zones using well log data.
 
+**This project was developed as part of a coursework assignment for the "Introduction to Oil and Gas Engineering" module.**  
+It implements a basic model for pore volume calculation using typical well log data.
+
+**[Live preview (HTMLPreview)](https://htmlpreview.github.io/?https://github.com/GannaUK/log_calculator/blob/main/index.html)**
+
 ##  Features
 
 - Manual input of log data (Depth, GR, DPHI, NPHI)
